@@ -6,15 +6,16 @@ inputs:
     description: GitHub token to determine the current tags and releases.
     required: true
   changelog-emojis:
-    default: true
+    default: "true"
     description: Whether to include emojis in the changelog
+    required: false
 outputs:
   version:
     description: The determined version number, empty if no new version should be released.
     value: ${{ steps.semrel.outputs.version }}
   release-notes-cache-key:
     description: Key for the actions/cache@v3 where the release notes are stored under changelog.txt
-    value: ${{ env.release-hash }}
+    value: ${{ steps.release-notes-hash.outputs.value }}
 runs:
   using: 'composite'
   steps:
@@ -29,10 +30,10 @@ runs:
   - name: Determine release notes hash
     id: release-notes-hash
     shell: bash
-    run: echo "release-hash=changelog-${{ hashFiles('changelog.txt') }}" >> $GITHUB_ENV
+    run: echo "::set-output name=value::changelog-${{ hashFiles('changelog.txt') }}"
   - name: Cache release notes
     uses: actions/cache@v3
     id: cache-release-notes
     with:
       path: changelog.txt
-      key: ${{ env.release-hash }}
+      key: ${{ steps.release-notes-hash.outputs.value }}
