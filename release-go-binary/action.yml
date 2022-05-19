@@ -1,0 +1,71 @@
+name: 'Release go binary'
+description: 'Builds a go binary and releases it to GitHub, passes the determined release version to the go binary using the ldflag "-X main.version=..."'
+author: 'Niklas Gergs'
+inputs:
+  github-token:
+    description: Github token with contents write permission to perform the release
+    required: true
+  binary-name:
+    description: Name of the application
+    required: true
+  go-version:
+    description: >-
+      The go-version that should be used to run the tests.
+      SemVer's version range syntax is supported.
+    required: true
+  go-os:
+    description: Operating system compilation target
+    required: true
+  go-arch:
+    description: Architecture compilation target
+    required: true
+  release-version:
+    description: The version of the release
+    required: true
+  release-notes-cache-key:
+    description: Cache key for actions/cache@v3 to load the release notes from the changelog.txt entry.
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Cache go modules
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - name: Load release notes
+      uses: actions/cache@v3
+      id: cache-release-notes
+      with:
+        path: changelog.txt
+        key: ${{ inputs.release-notes-cache-key }}
+    - name: Get OS and arch info
+      shell: bash
+      run: |
+        GOOS=${{ inputs.go-os }}
+        GOARCH=${{ inputs.go-arch }}
+        BINARY_NAME=${{ inputs.binary-name }}-$GOOS-$GOARCH
+        echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
+        echo "GOOS=$GOOS" >> $GITHUB_ENV
+        echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ inputs.go-version }}
+    - name: Build
+      shell: bash
+      run: |
+        CGO_ENABLED=0 go build -a -ldflags "-s -w -X 'main.version=v${{ inputs.release-version }}'" -o "$BINARY_NAME"
+    - name: Release with Notes
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ inputs.release-version }}
+        body_path: changelog.txt
+        files: ${{ env.BINARY_NAME }}
+        token: ${{ inputs.github-token }}
