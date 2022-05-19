@@ -1,0 +1,38 @@
+name: 'Prepare semantic release'
+description: 'Determines the next release version using semantic release and conventional commits. Does not release anything by itself.'
+author: 'Niklas Gergs'
+inputs:
+  github-token:
+    description: GitHub token to determine the current tags and releases.
+    required: true
+  changelog-emojis:
+    default: true
+    description: Whether to include emojis in the changelog
+outputs:
+  version:
+    description: The determined version number, empty if no new version should be released.
+    value: ${{ steps.semrel.outputs.version }}
+  release-notes-cache-key:
+    description: Key for the actions/cache@v3 where the release notes are stored under changelog.txt
+    value: ${{ env.release-hash }}
+runs:
+  using: 'composite'
+  steps:
+  - name: Determine release
+    uses: go-semantic-release/action@v1
+    id: semrel
+    with:
+      github-token: ${{ inputs.github-token }}
+      changelog-generator-opt: "emojis=${{ inputs.changelog-emojis }}"
+      dry: true
+      changelog-file: changelog.txt
+  - name: Determine release notes hash
+    id: release-notes-hash
+    shell: bash
+    run: echo "release-hash=changelog-${{ hashFiles('changelog.txt') }}" >> $GITHUB_ENV
+  - name: Cache release notes
+    uses: actions/cache@v3
+    id: cache-release-notes
+    with:
+      path: changelog.txt
+      key: ${{ env.release-hash }}
