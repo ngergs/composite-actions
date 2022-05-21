@@ -51,9 +51,12 @@ runs:
         GOOS=${{ inputs.go-os }}
         GOARCH=${{ inputs.go-arch }}
         BINARY_NAME=${{ inputs.binary-name }}-$GOOS-$GOARCH
-        echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
-        echo "GOOS=$GOOS" >> $GITHUB_ENV
-        echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+        if [ "${GOOS}" == "windows" ]; then
+            BINARY_NAME="${BINARY_NAME}.exe"
+        fi
+        echo "BINARY_NAME=${BINARY_NAME}" >> ${GITHUB_ENV}
+        echo "GOOS=${GOOS}" >> ${GITHUB_ENV}
+        echo "GOARCH=${GOARCH}" >> ${GITHUB_ENV}
     - name: Install Go
       uses: actions/setup-go@v2
       with:
@@ -61,7 +64,7 @@ runs:
     - name: Build
       shell: bash
       run: |
-        CGO_ENABLED=0 go build -a -ldflags "-s -w -X 'main.version=v${{ inputs.release-version }}'" -o "$BINARY_NAME"
+        CGO_ENABLED=0 go build -a -ldflags "-s -w -X 'main.version=v${{ inputs.release-version }}'" -o "${BINARY_NAME}"
     - name: Release with Notes
       uses: softprops/action-gh-release@v1
       with:
