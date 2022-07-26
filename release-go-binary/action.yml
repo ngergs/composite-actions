@@ -22,6 +22,10 @@ inputs:
   release-version:
     description: The version of the release
     required: true
+  release-version-go-variable:
+    description: The go variable that should be set to the release version
+    required: false
+    default: main.version
   release-notes-cache-key:
     description: Cache key for actions/cache@v3 to load the release notes from the changelog.txt entry.
     required: true
@@ -64,7 +68,7 @@ runs:
     - name: Build
       shell: bash
       run: |
-        CGO_ENABLED=0 go build -a -ldflags "-s -w -X 'main.version=v${{ inputs.release-version }}'" -o "${BINARY_NAME}"
+        CGO_ENABLED=0 go build -a -ldflags "-s -w -X '${{ inputs.release-version-go-variable }}=v${{ inputs.release-version }}'" -o "${BINARY_NAME}"
     - name: Release with Notes
       uses: softprops/action-gh-release@v1
       with:
