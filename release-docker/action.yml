@@ -20,11 +20,16 @@ inputs:
   release-notes-cache-key:
     description: Cache key for actions/cache@v3 to load the release notes from the changelog.txt entry.
     required: true
+  git-checkout:
+    description: Wether to check out code from git. If you specify false, you ar required to checkout the code beforehand!
+    required: false
+    default: true
 runs:
   using: 'composite'
   steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      if: ${{ inputs.git-checkout == 'true' }}
     - name: Load release notes
       uses: actions/cache@v3
       id: cache-release-notes
