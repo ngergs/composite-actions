@@ -34,15 +34,6 @@ runs:
   steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Cache go modules
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
     - name: Load release notes
       uses: actions/cache@v3
       id: cache-release-notes
@@ -62,9 +53,10 @@ runs:
         echo "GOOS=${GOOS}" >> ${GITHUB_ENV}
         echo "GOARCH=${GOARCH}" >> ${GITHUB_ENV}
     - name: Install Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v3
       with:
         go-version: ${{ inputs.go-version }}
+        cache: true
     - name: Build
       shell: bash
       run: |
