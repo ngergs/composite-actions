@@ -24,6 +24,10 @@ inputs:
     description: Wether to check out code from git. If you specify false, you ar required to checkout the code beforehand!
     required: false
     default: true
+  dockerfile:
+    description: Dockerfile to use for building the image
+    required: false
+    default: "./Dockerfile"
 runs:
   using: 'composite'
   steps:
@@ -47,7 +51,7 @@ runs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: ./Dockerfile
+        file: ${{ inputs.dockerfile }}
         push: true
         build-args: VERSION=v${{ inputs.release-version }}
         tags: |
