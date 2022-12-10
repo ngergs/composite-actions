@@ -30,7 +30,7 @@ runs:
   - name: Determine release notes hash
     id: release-notes-hash
     shell: bash
-    run: echo "::set-output name=value::changelog-${{ hashFiles('changelog.txt') }}"
+    run: echo "value=changelog-${{ hashFiles('changelog.txt') }}" >> ${GITHUB_OUTPUT}
   - name: Cache release notes
     uses: actions/cache@v3
     id: cache-release-notes
