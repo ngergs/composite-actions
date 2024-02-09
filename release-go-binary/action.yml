@@ -61,6 +61,14 @@ runs:
       with:
         go-version: ${{ inputs.go-version }}
         cache: true
+    - name: Run tests with race detection
+      shell: bash
+      run: go test -race ./...
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: latest
+        install-mode: binary
     - name: Build
       shell: bash
       run: |
