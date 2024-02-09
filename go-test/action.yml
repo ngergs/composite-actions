@@ -33,3 +33,4 @@ runs:
       with:
         version: latest
         install-mode: binary
+        args: --timeout=10m
