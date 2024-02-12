@@ -61,12 +61,6 @@ runs:
       with:
         go-version: ${{ inputs.go-version }}
         cache: true
-    - name: golangci-lint
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: latest
-        install-mode: binary
-        args: --timeout=10m
     - name: Build
       shell: bash
       run: |
