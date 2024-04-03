@@ -10,12 +10,12 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
     - name: Install Go
       uses: actions/setup-go@v5
       with:
         go-version: ${{ inputs.go-version }}
-    - name: Checkout code
-      uses: actions/checkout@v4
     - name: Test
       shell: bash
       run: go test -race ./...
