@@ -7,15 +7,6 @@ inputs:
       The go-version that should be used to run the tests.
       SemVer version range syntax is supported.
     required: true
-  github-token:
-    description: Github token to perform the release.
-    required: true
-  dockerhub-username:
-    description: The username for dockerhub
-    required: true
-  dockerhub-password:
-    description: The password for dockerhub
-    required: true
 runs:
   using: 'composite'
   steps:
