@@ -16,15 +16,6 @@ runs:
         go-version: ${{ inputs.go-version }}
     - name: Checkout code
       uses: actions/checkout@v3
-    - name: Cache go modules
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
     - name: Test
       shell: bash
       run: go test -race ./...
@@ -34,3 +25,4 @@ runs:
         version: latest
         install-mode: binary
         args: --timeout=10m
+        Skip-cache: true
