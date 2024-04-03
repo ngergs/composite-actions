@@ -21,7 +21,7 @@ inputs:
     description: Cache key for actions/cache@v3 to load the release notes from the changelog.txt entry.
     required: true
   git-checkout:
-    description: Wether to check out code from git. If you specify false, you ar required to checkout the code beforehand!
+    description: Weather to check out code from git. If you specify false, you ar required to checkout the code beforehand!
     required: false
     default: true
   dockerfile:
@@ -41,12 +41,12 @@ runs:
         path: changelog.txt
         key: ${{ inputs.release-notes-cache-key }}
     - name: Login to Docker Hub
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-password }}
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
     - name: Docker push
       uses: docker/build-push-action@v3
       with:
