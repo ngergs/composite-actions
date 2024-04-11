@@ -2,11 +2,6 @@ name: 'Go tests'
 description: 'Runs tests using go test ./... for the given go projects'
 author: 'Niklas Gergs'
 inputs:
-  go-version:
-    description: >-
-      The go-version that should be used to run the tests.
-      SemVer version range syntax is supported.
-    required: true
   github-token:
     description: Github token to perform the release.
     required: true
@@ -26,7 +21,7 @@ runs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: ${{ inputs.go-version }}
+        go-version-file: go.mod
     - name: Prepare licenses
       shell: bash
       run: |

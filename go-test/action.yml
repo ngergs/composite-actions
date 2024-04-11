@@ -1,12 +1,6 @@
 name: 'Go release'
 description: 'Releases a go project using goreleaser'
 author: 'Niklas Gergs'
-inputs:
-  go-version:
-    description: >-
-      The go-version that should be used to run the tests.
-      SemVer version range syntax is supported.
-    required: true
 runs:
   using: 'composite'
   steps:
@@ -15,7 +9,7 @@ runs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: ${{ inputs.go-version }}
+        go-version-file: go.mod
     - name: Test
       shell: bash
       run: go test -race ./...
