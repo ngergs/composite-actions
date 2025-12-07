@@ -32,7 +32,7 @@ runs:
     shell: bash
     run: echo "value=changelog-${{ hashFiles('changelog.txt') }}" >> ${GITHUB_OUTPUT}
   - name: Cache release notes
-    uses: actions/cache@v3
+    uses: actions/cache@v4
     id: cache-release-notes
     with:
       path: changelog.txt
